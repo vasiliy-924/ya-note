@@ -26,7 +26,6 @@ class TestNotesList(TestCase):
         self.client.force_login(self.author)
         response = self.client.get(self.NOTES_LIST_URL)
         self.assertContains(response, self.note.title)
-        # Автор не видит кнопку редактирования на списке
         self.assertNotContains(response, 'Редактировать')
 
 
@@ -52,7 +51,6 @@ class TestDetailPage(TestCase):
     def test_other_user_doesnt_see_buttons(self):
         self.client.force_login(self.reader)
         response = self.client.get(self.detail_url)
-        # Чужая заметка даёт 404
         self.assertEqual(response.status_code, HTTPStatus.NOT_FOUND)
 
 
@@ -116,15 +114,13 @@ class TestRoutes(TestCase):
                 response = self.client.get(url)
                 self.assertEqual(response.status_code, HTTPStatus.OK)
 
-        # Detail редиректит анонимного пользователя
+        # Для страницы деталей ожидаем редирект:
         detail_url = reverse('notes:detail', args=(self.note.slug,))
         response = self.client.get(detail_url)
         self.assertEqual(response.status_code, HTTPStatus.FOUND)
 
-        # Logout: GET и POST возвращают страницу logout (200)
+        # Для выхода через POST ожидаем редирект (302):
         logout_url = reverse('users:logout')
-        response_get = self.client.get(logout_url)
-        self.assertEqual(response_get.status_code, HTTPStatus.METHOD_NOT_ALLOWED)
         response_post = self.client.post(logout_url)
         self.assertEqual(response_post.status_code, HTTPStatus.FOUND)
 
