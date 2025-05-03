@@ -5,6 +5,7 @@ from django.urls import reverse
 
 from notes.forms import NoteForm
 
+
 @pytest.mark.parametrize(
     'parametrized_client, note_in_list',
     (
@@ -20,6 +21,7 @@ def test_notes_list_for_different_users(
     object_list = response.context['object_list']
     assert (note in object_list) is note_in_list
 
+
 @pytest.mark.parametrize(
     'name, args',
     (
@@ -31,4 +33,4 @@ def test_pages_contains_form(author_client, name, args):
     url = reverse(name, args=args)
     response = author_client.get(url)
     assert 'form' in response.context
-    assert isinstance(response.context['form'], NoteForm) 
+    assert isinstance(response.context['form'], NoteForm)

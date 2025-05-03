@@ -5,13 +5,13 @@ from django.urls import reverse
 from pytest_django.asserts import assertRedirects
 from pytest_lazyfixture import lazy_fixture
 
-# Проверка доступных страниц для анонимного пользователя
+
 @pytest.mark.parametrize(
     'name, expected_status',
     [
         ('notes:home', HTTPStatus.OK),
         ('users:login', HTTPStatus.OK),
-        ('users:logout', HTTPStatus.METHOD_NOT_ALLOWED),  # logout по GET возвращает 405
+        ('users:logout', HTTPStatus.METHOD_NOT_ALLOWED),
         ('users:signup', HTTPStatus.OK),
     ]
 )
@@ -20,7 +20,7 @@ def test_pages_availability_for_anonymous_user(client, name, expected_status):
     response = client.get(url)
     assert response.status_code == expected_status
 
-# Проверка страниц, доступных авторизованному пользователю (не автору конкретной заметки)
+
 @pytest.mark.parametrize(
     'name',
     ('notes:list', 'notes:add', 'notes:success')
@@ -30,7 +30,7 @@ def test_pages_availability_for_logged_in_user(not_author_client, name):
     response = not_author_client.get(url)
     assert response.status_code == HTTPStatus.OK
 
-# Проверка доступа к детальному просмотру/редактированию/удалению заметки для разных пользователей
+
 @pytest.mark.parametrize(
     'client_fixture, expected_status',
     [
@@ -49,7 +49,7 @@ def test_pages_availability_for_different_users(
     response = client_fixture.get(url)
     assert response.status_code == expected_status
 
-# Проверка редиректа на страницу логина для анонимного пользователя
+
 @pytest.mark.parametrize(
     'view_name, args',
     [
